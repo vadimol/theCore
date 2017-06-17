@@ -33,6 +33,19 @@ static inline uint64_t clk()
     return time(NULL) * 1000;
 }
 
+//! \brief Does busy waiting for specified amount of time.
+//! \param[in] ms The time in milliseconds to wait
+static inline void spin_wait(uint32_t ms)
+{
+    // Host platform is unreliable in terms of clock speed.
+    // This is a roughly approximation.
+    clock_t start = clock() / (CLOCKS_PER_SEC / 1000);
+
+    while ((uint32_t)(clock() / (CLOCKS_PER_SEC / 1000) - start) < ms) {}
+
+    return;
+}
+
 } // namespace ecl
 
 #endif // THE_CORE_HOST_PLATFORM_EXECUTION_HPP_

@@ -67,20 +67,12 @@ static inline bool wait_for(uint32_t ms, Predicate pred)
     }
 
     ecl::systmr::disable();
-#else // No system timer
-    uint32_t start = ecl::clk();
-    uint32_t to_wait = ms * (ecl::clk_spd() / 1000L);
+#else // No system timer, do busy wait
 
-    while (1) {
-        if (pred()) { // Make sure that predicate is called at least once.
-            return true;
-        } else if (ecl::clk() - start >= to_wait) { // Handles wraparound.
-            break;
-        }
+    ecl::spin_wait(ms);
 
-#ifdef USE_WFI_WFE
-        ecl::wfe();
-#endif // USE_WFI_WFE
+    if (pred()) { // Check predicate
+        return true;
     }
 #endif // USE_SYSTMR
 

@@ -61,6 +61,14 @@ static inline void wfe()
     __WFE();
 }
 
+static inline void arch_spin_wait(uint32_t ms)
+{
+    uint32_t start = ecl::clk();
+    uint32_t to_wait = ms * (ecl::clk_spd() / 1000L);
+
+    while (ecl::clk() - start < to_wait) {}
+}
+
 #if USE_SYSTMR
 
 namespace systmr

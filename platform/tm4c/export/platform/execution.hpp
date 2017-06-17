@@ -178,6 +178,14 @@ static inline void wfe()
     asm volatile ("wfe");
 }
 
+static inline void spin_wait(uint32_t ms)
+{
+    uint32_t start = ecl::clk();
+    uint32_t to_wait = ms * (ecl::clk_spd() / 1000L);
+
+    while (ecl::clk() - start < to_wait) {}
+}
+
 } // namespace ecl
 
 
